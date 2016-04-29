@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Markdown Editor</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="lib/node_modules/codemirror/lib/codemirror.css">
+    <style>
+        .CodeMirror {
+            border: 1px solid #eee;
+            width: 80%;
+            height: auto;
+            margin: 0 auto;
+        }
+        
+        .preview {
+            width: 80%;
+            height: auto;
+            margin: 0 auto;
+        }
+        
+        pre {
+            background: lightblue;
+        }
+        
+        progress {
+            width: 100%;
+        }
+        
+        progress:after {
+            content: '%';
+        }
+    </style>
+</head>
+
+<body ng-controller="mainController">
+    <h1>CodeMirror Markdown Editor</h1>
+    <div id="editor">
+    </div>
+    <div id="preview" class="preview" style="display: none">
+    </div>
+    <progress id="uploadprogress" max="100" value="0">0</progress>
+</body>
+<script src="lib/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="lib/node_modules/showdown/dist/showdown.min.js"></script>
+<script src="lib/node_modules/codemirror/lib/codemirror.js"></script>
+<script src="lib/node_modules/flickrapi/browser/flickrapi.js"></script>
+<script type="text/javascript" src="lib/node_modules/codemirror/mode/markdown/markdown.js"></script>
+<script type="text/javascript" src="lib/node_modules/codemirror/addon/mode/overlay.js"></script>
+<script type="text/javascript" src="lib/node_modules/codemirror/addon/selection/active-line.js"></script>
+<script type="text/javascript" src="lib/node_modules/codemirror/mode/gfm/gfm.js"></script>
+<script type="text/javascript" src="lib/node_modules/codemirror/mode/javascript/javascript.js"></script>
+<script src="app.js"></script>
+
+</html>
