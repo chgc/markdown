@@ -27,6 +27,7 @@ app.get("/", function (req, res) {
     res.sendFile(path.join(__dirname, '../app', 'index.html'));
 });
 
+// 上傳照片
 app.post('/upload', function (req, res) {
     /**
          * @description 檢查相簿是否存在，如果不存在則建立該相簿
