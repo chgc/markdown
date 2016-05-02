@@ -97,7 +97,7 @@
         xhr.onload = function (evt) {
           progressNode.value = progressNode.innerHTML = 100;
           linewidget[pos.line].isComplete = true;
-          editor.removeLineWidget(linewidget[pos.line].widget);
+          editor.removeLineWidget(linewidget[pos.line].widget);          
           doc.replaceRange(xhr.responseText, pos); // adds a new line         
         };
         xhr.upload.onprogress = function (event) {

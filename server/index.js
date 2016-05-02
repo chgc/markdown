@@ -29,8 +29,7 @@ app.get("/", function (req, res) {
 
 app.post('/upload', function (req, res) {
     //生成multiparty對象，並配置上傳目標路徑
-    var form = new multiparty.Form({ uploadDir: './public/files/' });
-
+    var form = new multiparty.Form();
 
     //上傳完成後處理
     form.parse(req, function (err, fields, files) {
@@ -39,38 +38,79 @@ app.post('/upload', function (req, res) {
             console.log('parse error: ' + err);
         } else {
             var inputFile = files.file[0];
-            var uploadedPath = inputFile.path;
-            var dstPath = './public/files/' + inputFile.originalFilename;
-            //重命名為真實文件名
-            fs.rename(uploadedPath, dstPath, function (err) {
-                if (err) {
-                    console.log('rename error: ' + err);
-                } else {
-                    console.log('rename ok');
-                }
-            });
-            setTimeout(function() {
-                 var imgString = "![](" + dstPath + ")";
-                 res.status(200).send(imgString);
-            }, 2000);
-            // Flickr.authenticate(FlickrOptions, function (error, flickr) {
-            //     var uploadOptions = {                  
-            //         photos: [{
-            //             title: inputFile.originalFilename,
-            //             photo: dstPath                       
-            //         }]
-            //     };
 
-            //     Flickr.upload(uploadOptions, FlickrOptions, function (err, result) {
-            //         if (err) {
-            //             console.error(error);
-            //         }
-            //         console.log("photos uploaded", result);
-            //         res.status(200).send(result);
-            //     });
-            // });
-            // var imgString = "![](" + dstPath + ")";
-            // res.status(200).send(imgString);
+            Flickr.authenticate(FlickrOptions, function (error, flickr) {
+                var uploadOptions = {
+                    photos: [{
+                        title: inputFile.originalFilename,
+                        photo: inputFile.path
+                    }]
+                };
+                Flickr.upload(uploadOptions, FlickrOptions, function (err, result) {
+                    if (err) {
+                        console.error(error);
+                    } else {
+                        var photo_id = result;
+                        var photoset_id = -1;
+                        flickr.photosets.getList({
+                            api_key: flickr.options.api_key,
+                            user_id: flickr.options.user_id
+                        }, function (err, result) {                            
+                            if (!err) {
+                                // check if album "blogphotos" exist
+                                var photosets = result.photosets.photoset;
+                                var album = photosets.filter(function (album) {
+                                    return album.title._content == "blogphotos";
+                                });
+                                if (album.length == 0) {
+                                    flickr.photosets.create({
+                                        api_key: flickr.options.api_key,
+                                        title: "blogphotos",
+                                        description: "for blog image usage",
+                                        primary_photo_id: photo_id
+                                    }, function (err, result) {
+                                        photoset_id = result.photoset.id;
+                                        flickr.photosets.addPhoto({
+                                            api_key: flickr.options.api_key,
+                                            photoset_id: photoset_id,
+                                            photo_id: photo_id
+                                        }, function (err, result) {
+
+                                        })
+                                    });
+                                } else {                                    
+                                    photoset_id = album[0].id;
+                                    flickr.photosets.addPhoto({
+                                        api_key: flickr.options.api_key,
+                                        photoset_id: photoset_id,
+                                        photo_id: photo_id
+                                    }, function (err, result) {
+
+                                    })
+                                }
+                            }
+                        });
+
+
+                        flickr.photos.getSizes({
+                            api_key: flickr.options.api_key,
+                            photo_id: result
+                        }, function (err, result) {
+                            if (result) {
+                                var obj = result.sizes.size.filter(function (x) {
+                                    return x.label == "Original";
+                                });
+                                if (obj.length > 0) {
+                                    res.status(200).send("![](" + obj[0].source + ")");
+                                }
+                            }
+                        });
+                    }
+                });
+
+
+            });
+
         }
     });
 });
