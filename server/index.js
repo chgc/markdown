@@ -49,23 +49,28 @@ app.post('/upload', function (req, res) {
                     console.log('rename ok');
                 }
             });
+            setTimeout(function() {
+                 var imgString = "![](" + dstPath + ")";
+                 res.status(200).send(imgString);
+            }, 2000);
+            // Flickr.authenticate(FlickrOptions, function (error, flickr) {
+            //     var uploadOptions = {                  
+            //         photos: [{
+            //             title: inputFile.originalFilename,
+            //             photo: dstPath                       
+            //         }]
+            //     };
 
-            Flickr.authenticate(FlickrOptions, function (error, flickr) {
-                var uploadOptions = {                  
-                    photos: [{
-                        title: inputFile.originalFilename,
-                        photo: dstPath                       
-                    }]
-                };
-
-                Flickr.upload(uploadOptions, FlickrOptions, function (err, result) {
-                    if (err) {
-                        console.error(error);
-                    }
-                    console.log("photos uploaded", result);
-                    res.status(200).send(result);
-                });
-            });
+            //     Flickr.upload(uploadOptions, FlickrOptions, function (err, result) {
+            //         if (err) {
+            //             console.error(error);
+            //         }
+            //         console.log("photos uploaded", result);
+            //         res.status(200).send(result);
+            //     });
+            // });
+            // var imgString = "![](" + dstPath + ")";
+            // res.status(200).send(imgString);
         }
     });
 });

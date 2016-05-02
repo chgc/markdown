@@ -18,7 +18,7 @@ gulp.task('copyNpmDependenciesOnly', function () {
   gulp.src(gnf(), { base: './' }).pipe(gulp.dest('./app/lib'));
 });
 
-gulp.task('browser-sync', ['copyNpmDependenciesOnly', 'nodemon'], function () {
+gulp.task('browser-sync', ['nodemon'], function () {
   browserSync.init(null, {
     proxy: "http://localhost:5000",
     files: ["app/**/*.*", "!app/lib/**/*.*"],
